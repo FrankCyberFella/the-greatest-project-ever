@@ -1,0 +1,91 @@
+@startuml
+
+class GetBookActivity {
+- RecommendationsServiceClient recommendationServiceClient
+- CatalogDao catalogDao
++ execute(GetBookRequest request): GetBookResponse
+}
+
+class GetPublishingStatusActivity {
+- PublishingStatusDao publishingStatusDao
++ execute(GetPublishingStatusRequest request): GetPublishingStatusResponse
+}
+
+class RemoveBookFromCatalogActivity {
+- CatalogDao catalogDao
++ execute(RemoveBookFromCatalogRequest request): RemoveBookFromCatalogResponse
+}
+class SubmitBookForPublishingActivity {
+- PublishingStatusDao publishingStatusDao
++ execute(SubmitBookForPublishingRequest) : SubmitBookForPublishingResponse
+}
+
+class RecommendationsServiceClient {
+- RecommendationsService recommendationsService
++ getBookRecommendations(BookGenre):List<BookRecommendation>
+}
+
+class CatalogDao {
+- dynamoDBMapper: DynamoDBMapper
++ getBookFromCatalog(String bookId): CatalogItemVersion
++ getLatestVersionOfBook(String bookId): CatalogItemVersion
+
+}
+class PublishingStatusDao {
+- String ADDITIONAL_NOTES_PREFIX
+- dynamoDBMapper: DynamoDBMapper
++ setPublishingStatus(String,
+       PublishingRecordStatus, String bookId): PublishingStatusItem
++ setPublishingStatus(String, PublishingRecordStatus,
+String bookId,String message): PublishingStatusItem
+
+}
+class CatalogItemVersion {
+-@DynamoDBHashKey bookId: String
+-@DynamoDBRangeKey version: int
+- inactive: boolean
+- title: String
+-author: String
+-text: String
+-genre: BookGenre
++ getBookId():String
++ setBookId(String bookId)
++ getVersion():int
++ setVersion(int)
++ getTitle():String
++ setTitle(String title)
++ getAuthor():String
++ setAuthor(String author)
++ getText():String
++ setText(String text)
++ getGenre(): BookGenre
++ setGenre(BookGenre)
++ isInactive(): boolean
++ setInactive(boolean)
+}
+
+class PublishingStatusItem {
+-@DynamoDBHashKey publishingRecordId: String
+-@DynamoDBRangeKey status: PublishingRecordStatus
+statusMessage: String
+bookId: String
+}
+
+class RuntimeException
+class BookNotFoundException
+class PublishingStatusNotFoundException
+class KindlePublishingClientException
+
+GetBookActivity *-- RecommendationsServiceClient
+GetBookActivity *-- CatalogDao
+GetPublishingStatusActivity *-- PublishingStatusDao
+RemoveBookFromCatalogActivity *-- CatalogDao
+SubmitBookForPublishingActivity *-- PublishingStatusDao
+CatalogDao ... CatalogItemVersion
+CatalogDao -- BookNotFoundException
+PublishingStatusDao ... PublishingStatusItem
+RuntimeException <.. PublishingStatusNotFoundException
+RuntimeException <.. BookNotFoundException
+RuntimeException <.. KindlePublishingClientException
+
+@enduml
