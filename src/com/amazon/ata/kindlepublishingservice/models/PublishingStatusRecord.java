@@ -2,7 +2,7 @@ package com.amazon.ata.kindlepublishingservice.models;
 
 import java.util.Objects;
 
-public class PublishingStatusRecord {
+public class  PublishingStatusRecord {
     private String status;
     private String statusMessage;
     private String bookId;
