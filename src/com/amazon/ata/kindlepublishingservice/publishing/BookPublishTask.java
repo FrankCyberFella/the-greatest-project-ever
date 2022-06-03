@@ -26,12 +26,9 @@ public class BookPublishTask implements Runnable {
     }
 
     public void run() {
-        LOGGER.info(">>BookPublishTask Task run()");
         BookPublishRequest request = bookPublishRequestManager.getBookPublishRequestToProcess();
-        LOGGER.info("BookPublishRequest from QUEUE");
 
         if (request == null) {
-            LOGGER.info("BookPublishRequest QUEUE IS NULL");
             return;
         }
 
@@ -39,26 +36,23 @@ public class BookPublishTask implements Runnable {
                 request.getPublishingRecordId(),
                 PublishingRecordStatus.IN_PROGRESS,
                 request.getBookId());
-        LOGGER.info(">>>>>>PublishingStatusDao IN_PROGRESS");
+
 
         try {
             KindleFormattedBook kindleFormattedBook = KindleFormatConverter.format(request);
-            LOGGER.info(">>>>>>KINDLE FORMAT CONVERTER");
 
             CatalogItemVersion book = catalogDao.createOrUpdateBook(kindleFormattedBook);
-            LOGGER.info("CALL TO UPDATE CATALOG DAO");
+
             publishingStatusDao.setPublishingStatus(
                     request.getPublishingRecordId(),
                     PublishingRecordStatus.SUCCESSFUL,
                     book.getBookId());
-            LOGGER.info(">>>>>>>>>>>CatalogDao SUCCESSFUL");
 
         } catch (Exception e) {
             publishingStatusDao.setPublishingStatus(
                     request.getPublishingRecordId(),
                     PublishingRecordStatus.FAILED,
                     request.getBookId());
-            LOGGER.info(">>>>>>>>>CatalogDao FAILED");
             e.getMessage();
         }
     }
