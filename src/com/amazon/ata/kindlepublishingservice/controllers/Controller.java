@@ -11,6 +11,7 @@ import com.amazon.ata.kindlepublishingservice.models.requests.GetBookRequest;
 import com.amazon.ata.kindlepublishingservice.models.requests.GetPublishingStatusRequest;
 import com.amazon.ata.kindlepublishingservice.models.requests.RemoveBookFromCatalogRequest;
 import com.amazon.ata.kindlepublishingservice.models.requests.SubmitBookForPublishingRequest;
+import com.amazon.ata.kindlepublishingservice.models.response.GetPublishingStatusResponse;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -32,7 +33,8 @@ public class Controller {
     public ResponseEntity<?> getPublishingStatus(@PathVariable String id) {
         GetPublishingStatusActivity statusActivity = component.provideGetPublishingStatusActivity();
         GetPublishingStatusRequest publishingStatusRequest = GetPublishingStatusRequest.builder().withPublishingRecordId(id).build();
-        return new ResponseEntity<>(statusActivity.execute(publishingStatusRequest), HttpStatus.OK);
+        GetPublishingStatusResponse status  = statusActivity.execute(publishingStatusRequest);
+        return new ResponseEntity<>(status, HttpStatus.OK);
     }
 
     @DeleteMapping(value = "/books/{id}")
