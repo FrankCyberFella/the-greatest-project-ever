@@ -29,7 +29,7 @@ public class SubmitBookForPublishingActivity {
 
     private PublishingStatusDao publishingStatusDao;
     private BookPublishRequestManager bookPublishRequestManager;
-    private CatalogDao catalogDao;
+    private CatalogDao          catalogDao;
 
     /**
      * Instantiates a new SubmitBookForPublishingActivity object.
